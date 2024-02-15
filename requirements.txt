@@ -1,0 +1,4 @@
+fastapi==0.109.2
+uvicorn==0.27.1
+python-sane==2.9.1
+Pillow==9.5.0
