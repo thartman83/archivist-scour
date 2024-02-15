@@ -17,12 +17,9 @@
 
 from typing import Union, List
 from fastapi import APIRouter, HTTPException
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
-from app.models import Service, Device
+from app.models import service, Device
 
 ServiceRouter = APIRouter(prefix='/service', tags=['service'])
-service = Service()
 
 
 @ServiceRouter.get('')

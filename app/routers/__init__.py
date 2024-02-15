@@ -15,5 +15,6 @@
 ###############################################################################
 """Entry point for the routers module."""
 from .service import ServiceRouter
+from .devices import DevicesRouter
 
-__all__ = ["ServiceRouter"]
+__all__ = ["ServiceRouter", "DevicesRouter"]

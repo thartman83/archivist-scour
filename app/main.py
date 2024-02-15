@@ -16,7 +16,8 @@
 """Main enrty point for fastapi microservice."""
 
 from fastapi import FastAPI
-from .routers import ServiceRouter
+from .routers import ServiceRouter, DevicesRouter
 
 app = FastAPI(title="Scour", version="0.0.1")
 app.include_router(ServiceRouter)
+app.include_router(DevicesRouter)

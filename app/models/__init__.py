@@ -16,6 +16,8 @@
 """Entry point for models module."""
 
 from .service import Service
-from .device import Device
+from .device import Device, DeviceParameter, DeviceOption
 
-__all__ = ["Service", "Device"]
+service = Service()
+
+__all__ = ["service", "Device", "DeviceParameter", "DeviceOption"]
