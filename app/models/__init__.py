@@ -15,9 +15,14 @@
 ###############################################################################
 """Entry point for models module."""
 
+import sane
 from .service import Service
 from .device import Device, DeviceParameter, DeviceOption
+from .job import Job, JobStatus
+
+SaneException = sane._sane.error
 
 service = Service()
 
-__all__ = ["service", "Device", "DeviceParameter", "DeviceOption"]
+__all__ = ["service", "Device", "DeviceParameter", "DeviceOption",
+           "SaneException", "Job", "JobStatus"]

@@ -17,7 +17,7 @@
 
 from typing import Union, List
 from fastapi import APIRouter, HTTPException
-from app.models import service, Device
+from app.models import service, Device, SaneException
 
 ServiceRouter = APIRouter(prefix='/service', tags=['service'])
 
@@ -38,6 +38,41 @@ async def devices():
         return service.devices
     except Exception as ex:
         raise HTTPException(500, str(ex)) from ex
+
+
+@ServiceRouter.get('/devices/{device_name}')
+async def get_device(device_name: str) -> Device:
+    """Return an available device."""
+    try:
+        return service.get_device(device_name)
+    except StopIteration as ex:
+        raise HTTPException(404, f"Device {device_name} not found.") from ex
+
+
+@ServiceRouter.put('/devices/{device_name}/enable')
+async def enable_device(device_name: str) -> Device:
+    """Return an enabled device."""
+    try:
+        dev = service.get_device(device_name)
+        dev.enable()
+        return dev
+    except StopIteration as ex:
+        raise HTTPException(404, f"Device {device_name} not found.") from ex
+    except SaneException as ex:
+        raise HTTPException(500, f"Internal Sane Exception: {str(ex)}") from ex
+
+
+@ServiceRouter.put('/device/{device_name}/disable')
+async def disable_device(device_name: str) -> Device:
+    """Disable an available enabled scanning device."""
+    try:
+        dev: Device = service.get_device(device_name)
+        dev.disable()
+        return dev
+    except StopIteration as ex:
+        raise HTTPException(404, f"Device {device_name} not found.") from ex
+    except SaneException as ex:
+        raise HTTPException(500, f"Internal Sane Exception: {str(ex)}") from ex
 
 
 @ServiceRouter.get('/refresh_devices')

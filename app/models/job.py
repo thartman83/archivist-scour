@@ -1,6 +1,6 @@
 ###############################################################################
-#  main.py for archivist scour microservice                                   #
-# Copyright (c) 2024 Tom Hartman (thomas.lees.hartman@gmail.com)              #
+#  job.py for archivist scour microservice                                    #
+#  Copyright (c) 2024 Tom Hartman (thomas.lees.hartman@gmail.com)             #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
 #  modify it under the terms of the GNU General Public License                #
@@ -13,19 +13,39 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              #
 #  GNU General Public License for more details.                               #
 ###############################################################################
-"""Main enrty point for fastapi microservice."""
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from .routers import ServiceRouter, DevicesRouter
+"""Model for a scour scan job."""
+from base64 import b64encode
+from io import BytesIO
+from enum import IntEnum
+from typing import List
+from datetime import datetime
+from pydantic import BaseModel, Base64Bytes
+from PIL import Image
 
-origins = [
-    "*"
-]
 
-app = FastAPI(title="Scour", version="0.0.1")
-app.include_router(ServiceRouter)
-app.include_router(DevicesRouter)
-app.add_middleware(CORSMiddleware, allow_origins=origins,
-                   allow_credentials=True, allow_methods=["*"],
-                   allow_headers=["*"])
+class JobStatus(IntEnum):
+    """Sane job statuses."""
+
+    STARTED = 0
+    COMPLETED = 1
+    ERROR = 2
+
+
+class Job(BaseModel):
+    """Model for a scan job."""
+
+    job_number: int
+    pages: List[Base64Bytes] = []
+    start_date: datetime = datetime.now()
+    end_date: datetime = None
+    status: JobStatus = JobStatus.STARTED
+    error: str = ""
+    _pages: List[Image] = []
+
+    def add_pages(self, page: Image) -> None:
+        """Add pages to the job."""
+        self._pages.append(page)
+        buf = BytesIO()
+        page.save(buf, format='JPEG')
+        self.pages.append(b64encode(buf.getvalue()))

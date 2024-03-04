@@ -52,3 +52,11 @@ class Service():
             raise ex from ex
 
         return self.devices
+
+    def get_device(self, device_name: str) -> Device:
+        """Get an available device device by name."""
+        try:
+            return next(d for d in self.devices
+                        if d.device_name == device_name)
+        except StopIteration as ex:
+            raise ex from ex

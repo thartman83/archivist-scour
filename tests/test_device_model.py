@@ -1,6 +1,6 @@
 ###############################################################################
-#  main.py for archivist scour microservice                                   #
-# Copyright (c) 2024 Tom Hartman (thomas.lees.hartman@gmail.com)              #
+#  test_device_model.py for archivist scour microservice                      #
+#  Copyright (c) 2024 Tom Hartman (thomas.lees.hartman@gmail.com)             #
 #                                                                             #
 #  This program is free software; you can redistribute it and/or              #
 #  modify it under the terms of the GNU General Public License                #
@@ -13,19 +13,34 @@
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              #
 #  GNU General Public License for more details.                               #
 ###############################################################################
-"""Main enrty point for fastapi microservice."""
+"""Unit tests for device model."""
+from app.models import Device
+from app.models import Job
+from PIL import Image
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from .routers import ServiceRouter, DevicesRouter
 
-origins = [
-    "*"
-]
+def test_get_next_job_id():
+    """
+    GIVEN a device object
+    WHEN get_next_job_id is called
+    SHOULD return the next id.
+    """
+    device = Device(device_name="brother4:net1;dev0",
+                    device_model="Brother",
+                    device_vendor="*Brother",
+                    device_type="L2700DW")
+    jobid = device._get_next_jobid()
 
-app = FastAPI(title="Scour", version="0.0.1")
-app.include_router(ServiceRouter)
-app.include_router(DevicesRouter)
-app.add_middleware(CORSMiddleware, allow_origins=origins,
-                   allow_credentials=True, allow_methods=["*"],
-                   allow_headers=["*"])
+    assert jobid == 0
+
+
+def test_job_pages():
+    """
+    GIVEN a Job object
+    WHEN a page is added
+    SHOULD serialize.
+    """
+    job = Job(job_number=1)
+    job.add_pages(Image.open('tests/data/lorem1.png'))
+
+    job.model_dump()
