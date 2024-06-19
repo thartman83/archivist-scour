@@ -98,6 +98,18 @@ async def scan(device_name: str) -> Job:
         raise HTTPException(400, f"Device {device_name} is busy.") from ex
 
 
+@DevicesRouter.get('/{device_name}/jobs')
+async def get_jobs(device_name: str) -> List[Job]:
+    """Return the list of currently available jobs run by the device."""
+    try:
+        dev = service.get_device(device_name)
+        return dev._jobs
+    except StopIteration as ex:
+        raise HTTPException(404, f"Device {device_name} not found.") from ex
+    except DeviceNotEnabled as ex:
+        raise HTTPException(404, f"Device {device_name} is not enabled.") from ex
+
+
 @DevicesRouter.get('/{device_name}/jobs/{jobid}')
 async def get_job(device_name: str, jobid: int) -> Job:
     """Return a job on the device."""

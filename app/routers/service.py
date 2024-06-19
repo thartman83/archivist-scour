@@ -62,7 +62,7 @@ async def enable_device(device_name: str) -> Device:
         raise HTTPException(500, f"Internal Sane Exception: {str(ex)}") from ex
 
 
-@ServiceRouter.put('/device/{device_name}/disable')
+@ServiceRouter.put('/devices/{device_name}/disable')
 async def disable_device(device_name: str) -> Device:
     """Disable an available enabled scanning device."""
     try:
